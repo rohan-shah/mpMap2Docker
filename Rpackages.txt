@@ -1,0 +1,9 @@
+ggplot2
+igraph
+roxygen2
+progress
+qtl
+fastcluster
+pryr
+nnls
+jsonlite
