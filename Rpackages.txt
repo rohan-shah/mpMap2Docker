@@ -7,3 +7,6 @@ fastcluster
 pryr
 nnls
 jsonlite
+sn
+car
+mnormt

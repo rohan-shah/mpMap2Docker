@@ -1,17 +1,19 @@
-# Copyright (c) Jupyter Development Team.
-# Copyright (c) CMRI-ProCan Team.
-# Distributed under the terms of the Modified BSD License.
-
-FROM ubuntu:18.10
-
-
+FROM ubuntu:20.04
 
 USER root
+
 ENV DEBIAN_FRONTEND noninteractive
 COPY packages.txt .
+
 RUN apt-get update \
- && apt-get -yq dist-upgrade \
- && cat packages.txt | xargs apt-get install -y --no-install-recommends \
+ && apt-get install -y gnupg \
+ && echo deb https://cloud.r-project.org/bin/linux/ubuntu focal-cran40/ >> /etc/apt/sources.list \
+ && gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9 \
+ && gpg -a --export E298A3A825C0D65DFD57CBB651716619E084DAB9 | apt-key add - \
+ && apt-get install -y ca-certificates \
+ && apt-get update && apt-get -yq dist-upgrade
+
+RUN cat packages.txt | xargs apt-get install -y --no-install-recommends \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
 
@@ -32,7 +34,7 @@ RUN git clone https://github.com/rohan-shah/mpMap2.git \
  && mkdir build \
  && cd build \ 
  && cmake -DCMAKE_BUILD_TYPE=Release .. -DRcpp_DIR=/Rcpp/build -DUSE_BOOST=On \
- && make && make install
+ && touch NAMESPACE && make && make install
 
 # Install Tini
 RUN wget --quiet https://github.com/krallin/tini/releases/download/v0.10.0/tini \
